@@ -1,72 +1,96 @@
+import { useState } from "react";
 import "./App.css";
+import { NewTaskForm } from "./components/NewTaskForm/NewTaskForm";
+import { TaskList } from "./components/TaskList/TaskList";
+import { Footer } from "./components/Footer/Footer";
+import { TasksFilter } from "./components/TasksFilter/TasksFilter";
+import tasksData from "./tasks";
+import { Header } from "./components/Header/Header";
 
 function App() {
+	const [tasks, setTasks] = useState(tasksData);
+	const [filter, setFilter] = useState("all");
+
+	function createTask(title) {
+		const newTask = {
+			id: Date.now(),
+			title,
+			completed: false,
+			created: new Date(),
+		};
+		setTasks([...tasks, newTask]);
+	}
+
+	function deleteTask(id) {
+		setTasks(tasks.filter((task) => task.id !== id));
+	}
+
+	function toggleTask(id) {
+		setTasks(
+			tasks.map((task) => {
+				if (task.id === id) {
+					return {
+						...task,
+						completed: !task.completed,
+					};
+				}
+				return task;
+			})
+		);
+	}
+
+	function updateTask(id, title) {
+		setTasks(
+			tasks.map((task) => {
+				if (task.id === id) {
+					return {
+						...task,
+						title,
+					};
+				}
+				return task;
+			})
+		);
+	}
+
+	function clearCompleted() {
+		setTasks(tasks.filter((task) => !task.completed));
+	}
+
+	function filterTasks() {
+		switch (filter) {
+			case "active":
+				return tasks.filter((task) => !task.completed);
+			case "completed":
+				return tasks.filter((task) => task.completed);
+			default:
+				return tasks;
+		}
+	}
+
+	const filteredTasks = filterTasks();
+	const remainingTasks = tasks.filter((task) => !task.completed);
+
 	return (
-		<>
-			<section className="todoapp">
-				<header className="header">
-					<h1>todos</h1>
-					<input
-						className="new-todo"
-						placeholder="What needs to be done?"
-						autoFocus
-					/>
-				</header>
-				<section className="main">
-					<ul className="todo-list">
-						<li className="completed">
-							<div className="view">
-								<input className="toggle" type="checkbox" />
-								<label>
-									<span className="description">Completed task</span>
-									<span className="created">created 17 seconds ago</span>
-								</label>
-								<button className="icon icon-edit"></button>
-								<button className="icon icon-destroy"></button>
-							</div>
-						</li>
-						<li className="editing">
-							<div className="view">
-								<input className="toggle" type="checkbox" />
-								<label>
-									<span className="description">Editing task</span>
-									<span className="created">created 5 minutes ago</span>
-								</label>
-								<button className="icon icon-edit"></button>
-								<button className="icon icon-destroy"></button>
-							</div>
-							<input type="text" className="edit" value="Editing task" />
-						</li>
-						<li>
-							<div className="view">
-								<input className="toggle" type="checkbox" />
-								<label>
-									<span className="description">Active task</span>
-									<span className="created">created 5 minutes ago</span>
-								</label>
-								<button className="icon icon-edit"></button>
-								<button className="icon icon-destroy"></button>
-							</div>
-						</li>
-					</ul>
-					<footer className="footer">
-						<span className="todo-count">1 items left</span>
-						<ul className="filters">
-							<li>
-								<button className="selected">All</button>
-							</li>
-							<li>
-								<button>Active</button>
-							</li>
-							<li>
-								<button>Completed</button>
-							</li>
-						</ul>
-						<button className="clear-completed">Clear completed</button>
-					</footer>
-				</section>
-			</section>
-		</>
+		<div className="todoapp">
+			<Header title="todos">
+				<NewTaskForm onAddTask={createTask} />
+			</Header>
+			<main className="main">
+				<TaskList
+					tasks={filteredTasks}
+					onDelete={deleteTask}
+					onToggle={toggleTask}
+					onUpdate={updateTask}
+				/>
+			</main>
+			<Footer
+				tasksNumber={remainingTasks.length}
+				onClearCompleted={clearCompleted}
+			>
+				<TasksFilter filter={filter} onFilterChange={(f) => setFilter(f)} />
+			</Footer>
+		</div>
 	);
 }
 
