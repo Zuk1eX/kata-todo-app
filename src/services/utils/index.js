@@ -1,7 +1,7 @@
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from 'date-fns'
 
 function formatDate(date) {
-	return formatDistanceToNow(date, { addSuffix: true, includeSeconds: true });
+  return formatDistanceToNow(date, { addSuffix: true, includeSeconds: true })
 }
 
-export { formatDate };
+export default formatDate
