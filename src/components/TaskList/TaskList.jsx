@@ -12,10 +12,13 @@ export function TaskList({ tasks, ...props }) {
 	);
 }
 
-TaskList.defaultProps = {
-	tasks: [],
-};
-
 TaskList.propTypes = {
-	tasks: PropTypes.array,
+	tasks: PropTypes.arrayOf(
+		PropTypes.shape({
+			id: PropTypes.number.isRequired,
+			title: PropTypes.string.isRequired,
+			completed: PropTypes.bool.isRequired,
+			created: PropTypes.instanceOf(Date).isRequired,
+		})
+	).isRequired,
 };

@@ -1,61 +1,21 @@
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import "./App.css";
 import { NewTaskForm } from "./components/NewTaskForm/NewTaskForm";
 import { TaskList } from "./components/TaskList/TaskList";
 import { Footer } from "./components/Footer/Footer";
 import { TasksFilter } from "./components/TasksFilter/TasksFilter";
-import tasksData from "./tasks";
 import { Header } from "./components/Header/Header";
+import tasksReducer from "./services/reducers/tasksReducer";
 
 function App() {
-	const [tasks, setTasks] = useState(tasksData);
+	const [tasks, dispatch] = useReducer(tasksReducer, []);
 	const [filter, setFilter] = useState("all");
 
-	function createTask(title) {
-		const newTask = {
-			id: Date.now(),
-			title,
-			completed: false,
-			created: new Date(),
-		};
-		setTasks([...tasks, newTask]);
-	}
-
-	function deleteTask(id) {
-		setTasks(tasks.filter((task) => task.id !== id));
-	}
-
-	function toggleTask(id) {
-		setTasks(
-			tasks.map((task) => {
-				if (task.id === id) {
-					return {
-						...task,
-						completed: !task.completed,
-					};
-				}
-				return task;
-			})
-		);
-	}
-
-	function updateTask(id, title) {
-		setTasks(
-			tasks.map((task) => {
-				if (task.id === id) {
-					return {
-						...task,
-						title,
-					};
-				}
-				return task;
-			})
-		);
-	}
-
-	function clearCompleted() {
-		setTasks(tasks.filter((task) => !task.completed));
-	}
+	const createTask = (title) => dispatch({ type: "added", title });
+	const deleteTask = (id) => dispatch({ type: "deleted", id });
+	const toggleTask = (id) => dispatch({ type: "toggled", id });
+	const updateTask = (id, title) => dispatch({ type: "updated", id, title });
+	const clearCompleted = () => dispatch({ type: "cleared" });
 
 	function filterTasks() {
 		switch (filter) {
