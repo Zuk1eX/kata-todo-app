@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import './Task.css'
 import formatDate from '../../services/utils'
@@ -8,9 +8,31 @@ export default function Task({ task, onToggle, onDelete, onUpdate }) {
   const [statusClassName, setStatusClassName] = useState(task.completed ? 'completed' : null)
   const [title, setTitle] = useState(task.title)
 
+  let [minutes, seconds] = [0, 0]
+
+  function getTimePartsBetween(date1, date2) {
+    const diff = (date2 - date1) / 1000
+    return [Math.floor(diff / 60), Math.floor(diff) % 60]
+  }
+
+  if (task.isActive) {
+    ;[minutes, seconds] = getTimePartsBetween(new Date(), task.deadline)
+  } else {
+    ;[minutes, seconds] = getTimePartsBetween(task.updated, task.deadline)
+  }
+
+  const [minutesLeft, setMinutesLeft] = useState(minutes)
+  const [secondsLeft, setSecondsLeft] = useState(seconds)
+
+  function resetTimer() {
+    setMinutesLeft(0)
+    setSecondsLeft(0)
+  }
+
   function handleToggle() {
     setStatusClassName(task.completed ? null : 'completed')
     onToggle(task.id)
+    resetTimer()
   }
 
   function handleEdit() {
@@ -19,13 +41,47 @@ export default function Task({ task, onToggle, onDelete, onUpdate }) {
     setStatusClassName('editing')
   }
 
+  function handlePlay() {
+    if (task.isActive || task.completed) return
+    const convertedTime = (minutesLeft * 60 + secondsLeft) * 1000
+    const newDeadline = new Date(Date.now() + convertedTime + 50)
+    onUpdate(task.id, title, newDeadline, true)
+  }
+
+  function handlePause() {
+    if (!task.isActive || task.completed) return
+    onUpdate(task.id, title, task.deadline, false)
+  }
+
   function handleSubmit(e) {
     e.preventDefault()
     if (!title.trim()) return
-    onUpdate(task.id, title)
+    onUpdate(task.id, title, task.deadline, task.isActive)
     setIsEditing(false)
     setStatusClassName(null)
   }
+
+  const updateTimer = useCallback(
+    (timerId) => {
+      if (task.deadline < Date.now() || !task.isActive) {
+        clearInterval(timerId)
+        return
+      }
+
+      const [m, s] = getTimePartsBetween(Date.now(), task.deadline)
+      setMinutesLeft(m)
+      setSecondsLeft(s)
+    },
+    [task.deadline, task.isActive]
+  )
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      updateTimer(timer)
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [updateTimer])
 
   return (
     <li className={statusClassName}>
@@ -38,8 +94,23 @@ export default function Task({ task, onToggle, onDelete, onUpdate }) {
           id={`toggle-${task.id}`}
         />
         <label htmlFor={`toggle-${task.id}`}>
-          <span className="description">{task.title}</span>
-          <span className="created">{formatDate(task.created)}</span>
+          <span className="title">{task.title}</span>
+          <span className="description description--timer">
+            <button
+              type="button"
+              className="icon icon-play"
+              onClick={handlePlay}
+              disabled={!minutesLeft && !secondsLeft}
+            />
+            <button
+              type="button"
+              className="icon icon-pause"
+              onClick={handlePause}
+              disabled={!minutesLeft && !secondsLeft}
+            />
+            {`${minutesLeft}:${secondsLeft < 10 ? `0${secondsLeft}` : secondsLeft}`}
+          </span>
+          <span className="description">{formatDate(task.created)}</span>
         </label>
         <button
           type="button"
@@ -69,6 +140,9 @@ Task.propTypes = {
     title: PropTypes.string.isRequired,
     completed: PropTypes.bool.isRequired,
     created: PropTypes.instanceOf(Date).isRequired,
+    updated: PropTypes.instanceOf(Date).isRequired,
+    deadline: PropTypes.instanceOf(Date).isRequired,
+    isActive: PropTypes.bool.isRequired,
   }).isRequired,
   onToggle: PropTypes.func,
   onDelete: PropTypes.func,

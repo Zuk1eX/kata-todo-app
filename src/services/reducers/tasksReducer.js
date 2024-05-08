@@ -8,6 +8,9 @@ export default function tasksReducer(tasks, action) {
           title: action.title,
           completed: false,
           created: new Date(),
+          updated: new Date(),
+          deadline: action.deadline,
+          isActive: true,
         },
       ]
     }
@@ -20,6 +23,9 @@ export default function tasksReducer(tasks, action) {
           return {
             ...task,
             completed: !task.completed,
+            updated: new Date(),
+            deadline: new Date(),
+            isActive: false,
           }
         }
         return task
@@ -31,6 +37,9 @@ export default function tasksReducer(tasks, action) {
           return {
             ...task,
             title: action.title,
+            updated: new Date(),
+            deadline: action.deadline,
+            isActive: action.isActive,
           }
         }
         return task

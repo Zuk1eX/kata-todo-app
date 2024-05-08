@@ -25,6 +25,9 @@ TaskList.propTypes = {
       title: PropTypes.string.isRequired,
       completed: PropTypes.bool.isRequired,
       created: PropTypes.instanceOf(Date).isRequired,
+      updated: PropTypes.instanceOf(Date).isRequired,
+      deadline: PropTypes.instanceOf(Date).isRequired,
+      isActive: PropTypes.bool.isRequired,
     })
   ).isRequired,
   onDelete: PropTypes.func,

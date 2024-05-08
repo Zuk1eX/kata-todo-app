@@ -11,10 +11,10 @@ function App() {
   const [tasks, dispatch] = useReducer(tasksReducer, [])
   const [filter, setFilter] = useState('all')
 
-  const createTask = (title) => dispatch({ type: 'added', title })
+  const createTask = (title, deadline) => dispatch({ type: 'added', title, deadline })
   const deleteTask = (id) => dispatch({ type: 'deleted', id })
   const toggleTask = (id) => dispatch({ type: 'toggled', id })
-  const updateTask = (id, title) => dispatch({ type: 'updated', id, title })
+  const updateTask = (id, title, deadline, isActive) => dispatch({ type: 'updated', id, title, deadline, isActive })
   const clearCompleted = () => dispatch({ type: 'cleared' })
 
   function filterTasks() {
