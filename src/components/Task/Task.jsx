@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import './Task.css'
 import formatDate from '../../services/utils'
@@ -23,6 +23,27 @@ export default function Task({ task, onToggle, onDelete, onUpdate }) {
 
   const [minutesLeft, setMinutesLeft] = useState(minutes)
   const [secondsLeft, setSecondsLeft] = useState(seconds)
+
+  const taskRef = useRef(null)
+
+  useEffect(() => {
+    if (!isEditing) return null
+
+    function handleKeydown(e) {
+      if (e.key === 'Escape') {
+        setIsEditing(false)
+        setStatusClassName(null)
+        setTitle(task.title)
+      }
+    }
+
+    const taskEl = taskRef.current
+    taskEl.addEventListener('keydown', handleKeydown)
+
+    return () => {
+      taskEl.removeEventListener('keydown', handleKeydown)
+    }
+  }, [isEditing, task.title])
 
   function resetTimer() {
     setMinutesLeft(0)
@@ -84,7 +105,7 @@ export default function Task({ task, onToggle, onDelete, onUpdate }) {
   }, [updateTimer])
 
   return (
-    <li className={statusClassName}>
+    <li className={statusClassName} ref={taskRef}>
       <div className="view">
         <input
           className="toggle"

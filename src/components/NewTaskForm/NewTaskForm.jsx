@@ -4,18 +4,20 @@ import './NewTaskForm.css'
 
 export default function NewTaskForm({ onAddTask }) {
   const [title, setTitle] = useState('')
-  const [minutes, setMinutes] = useState(2)
-  const [seconds, setSeconds] = useState(30)
+  const [minutes, setMinutes] = useState(5)
+  const [seconds, setSeconds] = useState(0)
 
   const timer = minutes * 60 + seconds
 
   function handleSubmit(e) {
     e.preventDefault()
-    const deadline = new Date(Date.now() + timer * 1000)
-
     if (!title.trim()) return
+
+    const deadline = new Date(Date.now() + timer * 1000)
     onAddTask(title.trim(), deadline)
     setTitle('')
+    setMinutes(5)
+    setSeconds(0)
   }
 
   function handleMinutes(value) {
