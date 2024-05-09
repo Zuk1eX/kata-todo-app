@@ -13,7 +13,7 @@ export default function NewTaskForm({ onAddTask }) {
     e.preventDefault()
     if (!title.trim()) return
 
-    const deadline = new Date(Date.now() + timer * 1000)
+    const deadline = Date.now() + timer * 1000
     onAddTask(title.trim(), deadline)
     setTitle('')
     setMinutes(5)

@@ -5,7 +5,7 @@ function formatDate(date) {
 }
 
 function diffBetweenDates(date1, date2) {
-  const diff = (date2 - date1) / 1000
+  const diff = Math.round((date2 - date1) / 1000)
   return [Math.floor(diff / 60), Math.floor(diff % 60)]
 }
 

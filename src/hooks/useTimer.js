@@ -7,12 +7,13 @@ export default function useTimer([minutes, seconds], expirationDate, activeStatu
 
   const updateTimer = useCallback(
     (timerId) => {
-      if (expirationDate < Date.now() || !activeStatus) {
+      const now = Date.now()
+      if (expirationDate < now || !activeStatus) {
         clearInterval(timerId)
         return
       }
 
-      const [m, s] = diffBetweenDates(Date.now(), expirationDate)
+      const [m, s] = diffBetweenDates(now, expirationDate)
       setMinutesLeft(m)
       setSecondsLeft(s)
     },

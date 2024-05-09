@@ -10,7 +10,7 @@ export default function Task({ task, onToggle, onDelete, onUpdate }) {
   const [statusClassName, setStatusClassName] = useState(task.completed ? 'completed' : null)
   const [title, setTitle] = useState(task.title)
 
-  const datesToDiff = task.isActive ? [new Date(), task.deadline] : [task.updated, task.deadline]
+  const datesToDiff = task.isActive ? [Date.now(), task.deadline] : [task.updated, task.deadline]
   const time = diffBetweenDates(...datesToDiff)
 
   const { minutesLeft, secondsLeft, resetTimer } = useTimer(time, task.deadline, task.isActive)
@@ -42,7 +42,7 @@ export default function Task({ task, onToggle, onDelete, onUpdate }) {
   function handlePlay() {
     if (task.isActive || task.completed) return
     const convertedTime = (minutesLeft * 60 + secondsLeft) * 1000
-    const newDeadline = new Date(Date.now() + convertedTime + 50)
+    const newDeadline = Date.now() + convertedTime
     onUpdate(task.id, title, newDeadline, true)
   }
 
@@ -109,7 +109,7 @@ Task.propTypes = {
     completed: PropTypes.bool.isRequired,
     created: PropTypes.instanceOf(Date).isRequired,
     updated: PropTypes.instanceOf(Date).isRequired,
-    deadline: PropTypes.instanceOf(Date).isRequired,
+    // deadline: PropTypes.instanceOf(Date).isRequired,
     isActive: PropTypes.bool.isRequired,
   }).isRequired,
   onToggle: PropTypes.func,
