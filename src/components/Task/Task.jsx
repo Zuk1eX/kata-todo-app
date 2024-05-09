@@ -1,54 +1,30 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import './Task.css'
-import formatDate from '../../services/utils'
+import { diffBetweenDates, formatDate } from '../../services/utils'
+import { useTimer, useEscapeHandler, useClickOutside } from '../../hooks/index'
 
 export default function Task({ task, onToggle, onDelete, onUpdate }) {
   const [isEditing, setIsEditing] = useState(false)
   const [statusClassName, setStatusClassName] = useState(task.completed ? 'completed' : null)
   const [title, setTitle] = useState(task.title)
 
-  let [minutes, seconds] = [0, 0]
+  const datesToDiff = task.isActive ? [new Date(), task.deadline] : [task.updated, task.deadline]
+  const time = diffBetweenDates(...datesToDiff)
 
-  function getTimePartsBetween(date1, date2) {
-    const diff = (date2 - date1) / 1000
-    return [Math.floor(diff / 60), Math.floor(diff) % 60]
-  }
+  const { minutesLeft, secondsLeft, resetTimer } = useTimer(time, task.deadline, task.isActive)
 
-  if (task.isActive) {
-    ;[minutes, seconds] = getTimePartsBetween(new Date(), task.deadline)
-  } else {
-    ;[minutes, seconds] = getTimePartsBetween(task.updated, task.deadline)
-  }
-
-  const [minutesLeft, setMinutesLeft] = useState(minutes)
-  const [secondsLeft, setSecondsLeft] = useState(seconds)
-
-  const taskRef = useRef(null)
-
-  useEffect(() => {
-    if (!isEditing) return null
-
-    function handleKeydown(e) {
-      if (e.key === 'Escape') {
-        setIsEditing(false)
-        setStatusClassName(null)
-        setTitle(task.title)
-      }
-    }
-
-    const taskEl = taskRef.current
-    taskEl.addEventListener('keydown', handleKeydown)
-
-    return () => {
-      taskEl.removeEventListener('keydown', handleKeydown)
+  const handleEscape = useCallback(() => {
+    if (isEditing) {
+      setIsEditing(false)
+      setStatusClassName(null)
+      setTitle(task.title)
     }
   }, [isEditing, task.title])
 
-  function resetTimer() {
-    setMinutesLeft(0)
-    setSecondsLeft(0)
-  }
+  const taskRef = useRef(null)
+  useEscapeHandler(taskRef, handleEscape)
+  useClickOutside(taskRef, handleEscape)
 
   function handleToggle() {
     setStatusClassName(task.completed ? null : 'completed')
@@ -81,28 +57,6 @@ export default function Task({ task, onToggle, onDelete, onUpdate }) {
     setIsEditing(false)
     setStatusClassName(null)
   }
-
-  const updateTimer = useCallback(
-    (timerId) => {
-      if (task.deadline < Date.now() || !task.isActive) {
-        clearInterval(timerId)
-        return
-      }
-
-      const [m, s] = getTimePartsBetween(Date.now(), task.deadline)
-      setMinutesLeft(m)
-      setSecondsLeft(s)
-    },
-    [task.deadline, task.isActive]
-  )
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      updateTimer(timer)
-    }, 1000)
-
-    return () => clearInterval(timer)
-  }, [updateTimer])
 
   return (
     <li className={statusClassName} ref={taskRef}>
