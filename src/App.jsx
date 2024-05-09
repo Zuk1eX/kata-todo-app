@@ -34,7 +34,7 @@ function App() {
   return (
     <div className="todoapp">
       <Header title="todos">
-        <NewTaskForm onAddTask={createTask} />
+        <NewTaskForm onAddTask={createTask} min={5} sec={0} />
       </Header>
       <main className="main">
         <TaskList tasks={filteredTasks} onDelete={deleteTask} onToggle={toggleTask} onUpdate={updateTask} />

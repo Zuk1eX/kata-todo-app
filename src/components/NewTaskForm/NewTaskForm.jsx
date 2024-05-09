@@ -2,10 +2,10 @@ import { useState } from 'react'
 import PropTypes from 'prop-types'
 import './NewTaskForm.css'
 
-export default function NewTaskForm({ onAddTask }) {
+export default function NewTaskForm({ onAddTask, min, sec }) {
   const [title, setTitle] = useState('')
-  const [minutes, setMinutes] = useState(5)
-  const [seconds, setSeconds] = useState(0)
+  const [minutes, setMinutes] = useState(min)
+  const [seconds, setSeconds] = useState(sec)
 
   const timer = minutes * 60 + seconds
 
@@ -16,8 +16,8 @@ export default function NewTaskForm({ onAddTask }) {
     const deadline = Date.now() + timer * 1000
     onAddTask(title.trim(), deadline)
     setTitle('')
-    setMinutes(5)
-    setSeconds(0)
+    setMinutes(min)
+    setSeconds(sec)
   }
 
   function handleMinutes(value) {
@@ -60,8 +60,12 @@ export default function NewTaskForm({ onAddTask }) {
 
 NewTaskForm.defaultProps = {
   onAddTask: () => {},
+  min: 0,
+  sec: 0,
 }
 
 NewTaskForm.propTypes = {
   onAddTask: PropTypes.func,
+  min: PropTypes.number,
+  sec: PropTypes.number,
 }

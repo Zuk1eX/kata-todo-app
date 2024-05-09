@@ -13,7 +13,11 @@ export default function Task({ task, onToggle, onDelete, onUpdate }) {
   const datesToDiff = task.isActive ? [Date.now(), task.deadline] : [task.updated, task.deadline]
   const time = diffBetweenDates(...datesToDiff)
 
-  const { minutesLeft, secondsLeft, resetTimer } = useTimer(time, task.deadline, task.isActive)
+  function setInactive() {
+    onUpdate(task.id, task.title, task.deadline, false)
+  }
+
+  const { minutesLeft, secondsLeft, resetTimer } = useTimer(time, task.deadline, task.isActive, setInactive)
 
   const handleEscape = useCallback(() => {
     if (isEditing) {
