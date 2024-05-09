@@ -24,9 +24,9 @@ TaskList.propTypes = {
       id: PropTypes.number.isRequired,
       title: PropTypes.string.isRequired,
       completed: PropTypes.bool.isRequired,
-      created: PropTypes.instanceOf(Date).isRequired,
-      updated: PropTypes.instanceOf(Date).isRequired,
-      deadline: PropTypes.instanceOf(Date).isRequired,
+      created: PropTypes.number.isRequired,
+      updated: PropTypes.number.isRequired,
+      deadline: PropTypes.number.isRequired,
       isActive: PropTypes.bool.isRequired,
     })
   ).isRequired,
