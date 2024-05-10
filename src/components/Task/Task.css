@@ -82,6 +82,9 @@
 .todo-list li label .description {
   color: gray;
   font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .todo-list li label .description--timer > button {
@@ -159,6 +162,11 @@
 
 .todo-list li .icon-play {
   font-size: 16px;
+}
+
+.icon-pause:after,
+.icon-play:after {
+  line-height: 100%;
 }
 
 .icon-pause:after {

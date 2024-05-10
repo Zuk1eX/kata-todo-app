@@ -8,7 +8,7 @@ export default function useTimer([minutes, seconds], expirationDate, activeStatu
   const updateTimer = useCallback(
     (timerId) => {
       const now = Date.now()
-      if (expirationDate + 500 < now || !activeStatus) {
+      if (expirationDate + 1000 < now || !activeStatus) {
         clearInterval(timerId)
         setInactive()
         return
