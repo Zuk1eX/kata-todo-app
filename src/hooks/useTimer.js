@@ -5,21 +5,16 @@ export default function useTimer([minutes, seconds], expirationDate, activeStatu
   const [minutesLeft, setMinutesLeft] = useState(minutes)
   const [secondsLeft, setSecondsLeft] = useState(seconds)
 
-  const updateTimer = useCallback(
-    (timerId) => {
-      const now = Date.now()
-      if (expirationDate + 1000 < now || !activeStatus) {
-        clearInterval(timerId)
-        setInactive()
-        return
-      }
+  const updateTimer = useCallback(() => {
+    const now = Date.now()
+    if (expirationDate <= now || !activeStatus) {
+      setInactive()
+    }
 
-      const [m, s] = diffBetweenDates(now, expirationDate)
-      setMinutesLeft(m)
-      setSecondsLeft(s)
-    },
-    [expirationDate, activeStatus, setInactive]
-  )
+    const [m, s] = diffBetweenDates(now, expirationDate)
+    setMinutesLeft(m)
+    setSecondsLeft(s)
+  }, [expirationDate, activeStatus, setInactive])
 
   function resetTimer() {
     setMinutesLeft(0)
@@ -30,7 +25,7 @@ export default function useTimer([minutes, seconds], expirationDate, activeStatu
     let timer
     if (activeStatus) {
       timer = setInterval(() => {
-        updateTimer(timer)
+        updateTimer()
       }, 1000)
     }
 

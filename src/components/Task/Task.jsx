@@ -13,9 +13,9 @@ export default function Task({ task, onToggle, onDelete, onUpdate }) {
   const datesToDiff = task.isActive ? [Date.now(), task.deadline] : [task.updated, task.deadline]
   const time = diffBetweenDates(...datesToDiff)
 
-  function setInactive() {
+  const setInactive = useCallback(() => {
     onUpdate(task.id, task.title, task.deadline, false)
-  }
+  }, [onUpdate, task.id, task.title, task.deadline])
 
   const { minutesLeft, secondsLeft, resetTimer } = useTimer(time, task.deadline, task.isActive, setInactive)
 

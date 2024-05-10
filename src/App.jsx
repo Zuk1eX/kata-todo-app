@@ -1,4 +1,4 @@
-import { useReducer, useState } from 'react'
+import { useCallback, useReducer, useState } from 'react'
 import './App.css'
 import NewTaskForm from './components/NewTaskForm/NewTaskForm'
 import TaskList from './components/TaskList/TaskList'
@@ -14,7 +14,10 @@ function App() {
   const createTask = (title, deadline) => dispatch({ type: 'added', title, deadline })
   const deleteTask = (id) => dispatch({ type: 'deleted', id })
   const toggleTask = (id) => dispatch({ type: 'toggled', id })
-  const updateTask = (id, title, deadline, isActive) => dispatch({ type: 'updated', id, title, deadline, isActive })
+  const updateTask = useCallback(
+    (id, title, deadline, isActive) => dispatch({ type: 'updated', id, title, deadline, isActive }),
+    []
+  )
   const clearCompleted = () => dispatch({ type: 'cleared' })
 
   function filterTasks() {
