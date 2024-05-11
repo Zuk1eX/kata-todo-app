@@ -1,0 +1,7 @@
+.todo-list li label .description--timer > button {
+  margin-inline-end: 5px;
+}
+
+.todo-list li label .description--alert {
+  color: red;
+}

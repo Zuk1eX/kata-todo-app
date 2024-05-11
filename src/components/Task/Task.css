@@ -80,15 +80,11 @@
 }
 
 .todo-list li label .description {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   color: gray;
   font-size: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.todo-list li label .description--timer > button {
-  margin-inline-end: 5px;
 }
 
 .todo-list li label .title {
