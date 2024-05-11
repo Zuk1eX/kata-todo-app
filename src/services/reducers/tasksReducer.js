@@ -10,7 +10,7 @@ export default function tasksReducer(tasks, action) {
           created: Date.now(),
           updated: Date.now(),
           deadline: action.deadline,
-          isActive: true,
+          isActive: false,
         },
       ]
     }
